@@ -22,6 +22,13 @@ const StudentsServices = {
 			.select('*')
 			.from('accomodations')
 			.where('accom_id', id);
+	},
+
+	deleteStudent(db, id) {
+		return db
+			.from('students')
+			.where('id', id)
+			.del();
 	}
 };
 

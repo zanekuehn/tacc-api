@@ -58,4 +58,10 @@ StudentsRouter.get('/:accoms', (req, res, next) => {
 	});
 });
 
+StudentsRouter.delete('/:id', (req, res, next) => {
+	StudentsServices.deleteStudent(req.app.get('db'), req.params.id)
+		.then(res.status(204).end())
+		.catch(next);
+});
+
 module.exports = StudentsRouter;
