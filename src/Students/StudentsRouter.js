@@ -15,12 +15,26 @@ StudentsRouter.get('/', (req, res, next) => {
 	});
 });
 
+StudentsRouter.get('/student/:id', (req, res, next) => {
+	StudentsServices.getSingleStudent(req.app.get('db'), req.params.id).then(
+		(student) => {
+			if (!student) {
+				return res
+					.status(404)
+					.json({ error: { message: 'Student not found' } });
+			}
+			return res.json(student);
+		}
+	);
+});
+
 StudentsRouter.post('/', jsonBodyParser, (req, res, next) => {
-	const { name, grade } = req.body;
+	const { name, grade, classroom } = req.body;
 
 	const newStudent = {
 		name,
-		grade
+		grade,
+		classroom
 	};
 
 	StudentsServices.addStudent(req.app.get('db'), newStudent).then((student) =>
@@ -32,12 +46,14 @@ StudentsRouter.post('/', jsonBodyParser, (req, res, next) => {
 });
 
 StudentsRouter.post('/:id', jsonBodyParser, (req, res, next) => {
-	const { accomdation, description } = req.body;
+	const { accomdation, description, currentday, fulfilled } = req.body;
 	const accom_id = req.params.id;
 	console.log(accom_id);
 	const newAccomodation = {
 		accomdation,
 		description,
+		currentday,
+		fulfilled,
 		accom_id
 	};
 
@@ -53,8 +69,25 @@ StudentsRouter.post('/:id', jsonBodyParser, (req, res, next) => {
 StudentsRouter.get('/:accoms', (req, res, next) => {
 	const id = req.params.accoms;
 
+	StudentsServices.getAccomodationsLimited(req.app.get('db'), id).then(
+		(accom) => {
+			return res.json(accom);
+		}
+	);
+});
+
+StudentsRouter.get('/all/:id', (req, res, next) => {
+	const id = req.params.id;
+
 	StudentsServices.getAccomodations(req.app.get('db'), id).then((accom) => {
 		return res.json(accom);
+	});
+});
+
+StudentsRouter.get('/form/:id', (req, res, next) => {
+	const id = req.params.id;
+	StudentsServices.fillForm(req.app.get('db'), id).then((accoms) => {
+		return res.json(accoms);
 	});
 });
 
